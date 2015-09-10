@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="46" height="20" tilewidth="20" tileheight="20" nextobjectid="1">
+ <tileset firstgid="1" name="sum" tilewidth="20" tileheight="20" tilecount="1248">
+  <image source="../../RawAssets/LostGarden/sum.png" trans="008a76" width="640" height="780"/>
+ </tileset>
+ <tileset firstgid="1249" name="Wall" tilewidth="20" tileheight="20" tilecount="117">
+  <image source="../../RawAssets/Hard Vacuum/Buildings/Wall.png" trans="008a76" width="260" height="180"/>
+ </tileset>
+ <layer name="Base Terrain" width="46" height="20">
+  <data encoding="base64" compression="zlib">
+   eJztw0ENAAAMA6HzL6vKJmJfSFg1VVVVfT6vt7lP
+  </data>
+ </layer>
+ <layer name="Base Terrain Sketchpad" width="46" height="20" visible="0">
+  <data encoding="base64" compression="zlib">
+   eJztwTEBAAAAwqD1T20IX6AAAADgNw5gAAE=
+  </data>
+ </layer>
+ <layer name="Terrain Features" width="46" height="20">
+  <data encoding="base64" compression="zlib">
+   eJyllk1O3EAUhNuCPQS4ASyygxBxBX6TBXACNtHAaA5BFglS4AgJG+AWEzYwl4iSbIBz5D3RJWpKr9t2KKnUxmoPn5+rX3dKKX1vUvpR8KV5YnP2bPyQ/dEMzdj1Y3r2U6rrk819a+Ogie+zT+zemfnKrq/NK/KMa2z3fhZ8m7mHNh6lZ88T/6SF9X+5B5k54u3D/c3GVWJ3j+zvWfNN8Jv4hpf0f8G3a+N2vr9p404T1/qupQ6/bc4f8i/hBpuznxP/fK55xD6m56Evdn0sNddag9nVxq0aC7fL2TxnzqeZifIScTOn13xLas3MrgfzcvOyhpYrmXFx/f/KXM068tKVm2teqjPL2bHe2+qPNQwjA/7eT8S9lnNz0YPbVcuG6415wbwoTLpGtcfpe01kBPeIvqH2wBo315yZT/P4zrxufk/PKJMzz2WO08xS4sb6Y+5SH0TWPGfaW7iHDIj5c4E7qjVndS1/8xI3rrtws7T2nBPu5cjHhnnJfFhgdnFfHhX6D9g036/l1lyjzm3M0FC4fQ0/pun9G8w6H/0R6zfab5g7ygi0bz7IzK62/uEcnm30YhUz83oYydxJitcjZ71U60ioX6lvg/soTZ89lFnnduHWnhadUe7N6wW2WlaQcedRJs0v9+6LDtzcG0oZqXG3ZUXPTeDm/b2WEXwX5vZabxB3LSPMzvtebV1G7FEGhsF7MXMSbu0P0XmQBe6+5ymwY++OuD1HnBHNf8SN/YP7Ns5VEX/beuwj3W8iZhf3Du1rvr9/babPVaXaMz/c9z3Ax98iYu4q5dc+XhLn5x+4wPt4
+  </data>
+ </layer>
+ <layer name="Bunkers" width="46" height="20">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo2AUjALagocsDAyPgfgpy0C7hDQgysrA4ATE/4eYu0HgN8vQczcondgNwfAGpRNxIJZkHWiXEA/+smDiUTAKRsEoGAWjgBoAABO2DaA=
+  </data>
+ </layer>
+</map>
