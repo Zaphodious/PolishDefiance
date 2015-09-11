@@ -18,7 +18,7 @@ public class Defiance extends ApplicationAdapter {
     public void create () {
         Tween.registerAccessor(Sprite.class, new SpriteTweenAccessor());
         Tween.registerAccessor(Camera.class, new CameraTweenAccessor());
-        scene = new FightScene("upscaled.tmx");//"blargh.tmx");
+        scene = new FightScene("upscaled-more-tactical.tmx");//"blargh.tmx");
 
         Gdx.input.setInputProcessor(scene.getMultiplexer());
 

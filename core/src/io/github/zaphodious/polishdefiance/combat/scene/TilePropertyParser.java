@@ -3,8 +3,8 @@ package io.github.zaphodious.polishdefiance.combat.scene;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.math.Vector2;
 import io.github.zaphodious.polishdefiance.ZaphUtil;
+import javafx.util.Pair;
 
 import java.util.Arrays;
 import java.util.List;
@@ -42,6 +42,7 @@ public class TilePropertyParser {
 
     private void setTileForInspection(int tileX, int tileY) {
 
+
         selectedCell = bunkerLayer.getCell(tileX, tileY);
 
         if (selectedCell == null) {
@@ -56,13 +57,18 @@ public class TilePropertyParser {
         }
 
 
-
-        props = selectedCell.getTile().getProperties();
+        try {
+            props = selectedCell.getTile().getProperties();
+        } catch (Exception e) {
+            System.out.println("The tile that was accessed unsuccessfully is " + tileX + "," + tileY);
+            e.printStackTrace();
+            setTileForInspection(1,1);
+        }
 
     }
 
-    public PropBundle getTranslatedProps(Vector2 vector2) {
-        return getTranslatedProps((int) vector2.x, (int) vector2.y);
+    public PropBundle getTranslatedProps(Pair<Integer, Integer> location) {
+        return getTranslatedProps(location.getKey(), location.getValue());
     }
 
     public PropBundle getTranslatedProps(int tileX, int tileY) {
@@ -84,8 +90,6 @@ public class TilePropertyParser {
         String hidesUnitString = props.get(PropertyNames.HIDES_UNITS, String.class);
         String movementSlowAmountString = props.get(PropertyNames.MOVEMENT_SLOW_AMOUNT, String.class);
         String firesSuperBulletsString = props.get(PropertyNames.FIRE_SUPER_BULLETS, String.class);
-
-        System.out.println("hookala " + bulletDodgeString);
 
         propBundle.bulletDodgeChance = Float.valueOf(bulletDodgeString);
         propBundle.hidesUnits = Boolean.valueOf(hidesUnitString);

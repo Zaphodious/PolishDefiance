@@ -188,7 +188,7 @@ public class FightUI extends Stage {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 fightScene.advanceRound();
-                fightScene.tracker.printListsOfObjects();
+                //fightScene.tracker.printListsOfObjects();
             }
         });
 

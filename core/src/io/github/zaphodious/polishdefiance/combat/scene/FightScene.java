@@ -10,16 +10,14 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.maps.MapProperties;
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.*;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
@@ -30,6 +28,7 @@ import io.github.zaphodious.polishdefiance.combat.entity.CombatUnit;
 import io.github.zaphodious.polishdefiance.combat.entity.Faction;
 import io.github.zaphodious.polishdefiance.combat.entity.SceneObjectTracker;
 import io.github.zaphodious.polishdefiance.Tween.CameraTweenAccessor;
+import javafx.util.Pair;
 
 import java.util.Iterator;
 import java.util.Random;
@@ -146,6 +145,16 @@ public class FightScene implements InputProcessor, GestureDetector.GestureListen
 
 
         isCombatMenuShowing = false;
+
+        int i = 0;
+        int j = 0;
+
+            for (i = 0; i > mapHeightInTiles; i++) {
+                for (j = 0; j > mapWidthInTiles; j++) {
+                    System.out.println(parser.getTranslatedProps(i,j).getBulletDodgeChance());
+                }
+            }
+
     }
 
     public Vector2 getWorldSize() {
@@ -206,7 +215,7 @@ public class FightScene implements InputProcessor, GestureDetector.GestureListen
         and the units that we're using to do our calculations.
          */
         differenceRatio = camera.viewportWidth / this.graphicDims.x;
-        menuBarHeight = 0;//(mapHeightInTiles * tileHeight)* ( ZaphUtil.GOLDEN_MEAN_REVERSE);//tileHeight * 3;
+        menuBarHeight = this.tileHeight;//(mapHeightInTiles * tileHeight)* ( ZaphUtil.GOLDEN_MEAN_REVERSE);//tileHeight * 3;
         System.out.println("Menu bar height after math with the ratio = " + menuBarHeight / differenceRatio);
         System.out.println("and window width = " + Gdx.graphics.getWidth());
         camera.position.y -= menuBarHeight/2;
@@ -525,10 +534,10 @@ public class FightScene implements InputProcessor, GestureDetector.GestureListen
         units.add(newUnit);*/
 
         if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
-            tracker.addNewObjectToScene("helm", tracker.getTextureFactory().getTexture("brutal-helm.png"), SceneObjectTracker.SceneObjectType.COMBAT_UNIT, SceneObjectTracker.SnapType.SNAP_TO_GRID, inWorldTouchLocation);
+            tracker.addNewObjectToScene("helm", new Texture("brutal-helm.png"), SceneObjectTracker.SceneObjectType.COMBAT_UNIT, SceneObjectTracker.SnapType.SNAP_TO_GRID, inWorldTouchLocation);
         } else {
             // String name, Texture texture, Vector2 startPosition, TweenManager tweenManager, SceneObjectTracker tracker, FightScene fightScene
-            CombatUnit newUnit = (CombatUnit) SceneObjectTracker.SceneObjectType.COMBAT_UNIT.newInstance("helm", tracker.getTextureFactory().getTexture("brutal-helm.png"), new Vector2(inWorldTouchLocation.x, inWorldTouchLocation.y), tweenManager,tracker,this);
+            CombatUnit newUnit = (CombatUnit) SceneObjectTracker.SceneObjectType.COMBAT_UNIT.newInstance("helm", new Texture("brutal-helm.png"), new Vector2(inWorldTouchLocation.x, inWorldTouchLocation.y), tweenManager,tracker,this);
             newUnit.setFaction(Faction.POLISH);
             try {
                 tracker.addObjectToScene(newUnit, SceneObjectTracker.SceneObjectType.COMBAT_UNIT.getSceneObjectClass(), SceneObjectTracker.SnapType.SNAP_TO_GRID);
@@ -681,11 +690,11 @@ public class FightScene implements InputProcessor, GestureDetector.GestureListen
         return getTileLocation(new Vector3(inWorldTouchLocation, 0));
     }
 
-    public Vector2 getCellAt(Rectangle location) {
+    public Pair<Integer, Integer> getCellAt(Rectangle location) {
         int tileX = (int) (location.x / this.tileWidth);
         int tileY = (int) (location.y / this.tileHeight);
 
-        return new Vector2(tileX,tileY);
+        return new Pair<Integer, Integer>(tileX,tileY);
     }
 
     public boolean doTheseOverlap(Sprite sprite1, Sprite sprite2) {

@@ -74,6 +74,8 @@ project(":android") {
         natives "com.badlogicgames.gdx:gdx-bullet-platform:$gdxVersion:natives-armeabi"
         natives "com.badlogicgames.gdx:gdx-bullet-platform:$gdxVersion:natives-armeabi-v7a"
         natives "com.badlogicgames.gdx:gdx-bullet-platform:$gdxVersion:natives-x86"
+		sourceCompatibility = 1.6
+		targetCompatibility = 1.6
 		compile fileTree(dir: '../libs', include: '*.jar')
     }
 }

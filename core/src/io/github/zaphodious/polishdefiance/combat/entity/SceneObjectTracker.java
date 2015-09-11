@@ -6,10 +6,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import io.github.zaphodious.polishdefiance.ZaphUtil;
 import io.github.zaphodious.polishdefiance.combat.scene.Direction;
 import io.github.zaphodious.polishdefiance.combat.scene.FightScene;
 import io.github.zaphodious.polishdefiance.combat.scene.TilePropertyParser;
-import io.github.zaphodious.polishdefiance.ZaphUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +22,6 @@ public final class SceneObjectTracker {
 
     private FightScene fightScene;
     private TweenManager tweenManager;
-    private TextureFactory textureFactory;
 
     private Map<Class, List<SceneObject>> objectLists;
     private List<Texture> texturesToDisposeOf;
@@ -34,7 +33,6 @@ public final class SceneObjectTracker {
         this.objectLists = ZaphUtil.newMap();
 
         this.texturesToDisposeOf = ZaphUtil.newList();
-        this.textureFactory = new TextureFactory();
     }
 
     public void addNewObjectToScene(String name, Texture texture, SceneObjectType objectType, SnapType snapType, Vector2 startPosition) {
@@ -67,7 +65,7 @@ public final class SceneObjectTracker {
                 objectLists.put(paramaterClass, new ArrayList<SceneObject>());
             }
 
-            System.out.println("Class matched!");
+            //System.out.println("Class matched!");
             objectLists.get(paramaterClass).add(sceneObject);
         } else {
             throw new ClassCastException("You tried to pass in a " + sceneObject.getClass() + ", but your type parameter was a " + paramaterClass);
@@ -99,20 +97,10 @@ public final class SceneObjectTracker {
 
         for (Projectile projectile : getObjectsOfType(Projectile.class)) {
             for (CombatUnit unit : getObjectsOfType(CombatUnit.class)) {
-
                 if (doesProjectileHitUnit(projectile, unit)) {
-                    /*Vector2 tileLocation = fightScene.getTileLocation(unit.getBoundingRectangle());
-                    TilePropertyParser.PropBundle propBundle = fightScene.getTilePropertyParser().getTranslatedProps(tileLocation);*/
-
-
-
                     unit.damage(projectile.getPower());
                     projectile.thisIsKillNow();
                 }
-
-
-
-
             }
         }
 
@@ -126,13 +114,11 @@ public final class SceneObjectTracker {
         if (fightScene.doTheseOverlap(projectile, unit)) {
             if (!projectile.isKill() && !unit.isKill()) {
                 if (projectile.getUnitFaction() != unit.getUnitFaction()) {
-                    Vector2 tileLocation = fightScene.getCellAt(unit.getBoundingRectangle());
-                    TilePropertyParser.PropBundle propBundle = fightScene.getTilePropertyParser().getTranslatedProps(tileLocation);
+                    TilePropertyParser.PropBundle propBundle = fightScene.getTilePropertyParser().getTranslatedProps(fightScene.getCellAt(unit.getBoundingRectangle()));
 
                     if (fightScene.getRandom().nextFloat() > propBundle.getBulletDodgeChance()) {
                         toReturn = true;
                     } else {
-                        System.out.println("and attack missed");
                     }
 
                 }
@@ -187,7 +173,7 @@ public final class SceneObjectTracker {
 
         for (int i = 0; i < fightScene.getRandom().nextInt(10); i++) {
             Vector2 startPosition = new Vector2(fightScene.getWorldSize().x-fightScene.getTileDims().x, fightScene.getRandom().nextInt((int) fightScene.getWorldSize().y));
-            this.addNewObjectToScene("Nazi!", textureFactory.getTexture("imp-laugh.png"),SceneObjectType.COMBAT_UNIT,SnapType.SNAP_TO_GRID,startPosition);
+            this.addNewObjectToScene("Nazi!", new Texture("imp-laugh.png"),SceneObjectType.COMBAT_UNIT,SnapType.SNAP_TO_GRID,startPosition);
         }
     }
 
@@ -195,9 +181,6 @@ public final class SceneObjectTracker {
         return fightScene;
     }
 
-    public TextureFactory getTextureFactory() {
-        return this.textureFactory;
-    }
 
     public void dispose() {
         for (List<SceneObject> list : objectLists.values()) {
@@ -210,7 +193,6 @@ public final class SceneObjectTracker {
             texture.dispose();
         }
 
-        textureFactory.dispose();
 
     }
 

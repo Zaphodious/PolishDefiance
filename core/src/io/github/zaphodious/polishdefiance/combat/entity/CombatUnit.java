@@ -72,6 +72,7 @@ public class CombatUnit extends SceneObject {
             @Override
             public void instructUnit(CombatUnit unit, Direction direction, TweenManager tweenManager, SceneObjectTracker tracker) {
                 Vector2 result = direction.getOffset(new Vector2(unit.getX(), unit.getY()),unit.moveAmounts);
+
                 Tween.to(unit, SpriteTweenAccessor.POSITION_XY, .5f).target(result.x, result.y).start(tweenManager);
             }
         },
@@ -82,9 +83,13 @@ public class CombatUnit extends SceneObject {
                 direction.getOffset(new Vector2(shootFrom.x, shootFrom.y), tracker.getFightScene().getTileDims());
                 //shootFrom.x += unit.getWidth()+.1;
                 //String name, Texture texture, Vector2 startPosition, TweenManager tweenManager, SceneObjectTracker tracker, FightScene fightScen
-                Projectile projectile = (Projectile) SceneObjectTracker.SceneObjectType.PROJECTILE.newInstance("bullet", tracker.getTextureFactory().getTexture("gun_blast.png"), new Vector2(shootFrom.x,shootFrom.y), tweenManager, tracker, tracker.getFightScene());
+                Projectile projectile = (Projectile) SceneObjectTracker.SceneObjectType.PROJECTILE.newInstance("bullet", new Texture("gun_blast.png"), new Vector2(shootFrom.x,shootFrom.y), tweenManager, tracker, tracker.getFightScene());
                 projectile.setDirection(unit.getUnitFaction().getDefaultAttackDirection());
                 projectile.setFaction(unit.getUnitFaction());
+                if (tracker.getFightScene().getTilePropertyParser().getTranslatedProps(tracker.getFightScene().getCellAt(unit.getBoundingRectangle())).isFireSuperbullets()) {
+                    projectile.setPower(20);
+                    projectile.scale(2f);
+                }
                 projectile.fireOff();
                 try {
                     tracker.addObjectToScene(projectile, SceneObjectTracker.SceneObjectType.PROJECTILE.getSceneObjectClass(), SceneObjectTracker.SnapType.FREE_FLOAT);

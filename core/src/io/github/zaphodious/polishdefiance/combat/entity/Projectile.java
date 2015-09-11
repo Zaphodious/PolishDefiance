@@ -14,6 +14,7 @@ public class Projectile extends SceneObject {
     FightScene fightScene;
     boolean isThisKill;
     Direction direction;
+    int power;
 
 
     Projectile(String name, FightScene fightScene, Texture texture, Vector2 startPosition, TweenManager tweenManager, SceneObjectTracker tracker, Faction faction) {
@@ -39,8 +40,9 @@ public class Projectile extends SceneObject {
     }
 
     public int getPower() {
-        return 5;
+        return power;
     }
+    public void setPower(int power) {this.power = power;}
 
     public void setDirection(Direction direction) {
         this.direction = direction;
