@@ -36,7 +36,7 @@ public enum Direction {
 
         @Override
         public void startProjectileTween(Projectile projectile, SceneObjectTracker tracker, TweenManager tweenManager) {
-            Tween.to((Sprite) projectile, SpriteTweenAccessor.POSITION_Y, 1.5f).target(0 - tracker.getFightScene().tileHeight).ease(Linear.INOUT).start(tweenManager);
+            Tween.to((Sprite) projectile, SpriteTweenAccessor.POSITION_Y, 1.5f).target(0 - tracker.getFightScene().getTileDimentions().getY()).ease(Linear.INOUT).start(tweenManager);
         }
     },
     EAST("East", 0f) {
@@ -67,8 +67,8 @@ public enum Direction {
         public void rotateSprite(Sprite sprite, SceneObjectTracker.SnapType snapType, SceneObjectTracker tracker) {
             super.rotateSprite(sprite, snapType, tracker);
             Vector2 position = ZaphUtil.getVectorFromRectangle(sprite.getBoundingRectangle());
-            position.x -= tracker.getFightScene().getTileDims().x;
-            position.y += tracker.getFightScene().getTileDims().y;
+            position.x -= tracker.getFightScene().getTileDimentions().getX();
+            position.y += tracker.getFightScene().getTileDimentions().getY();
             sprite.setX(position.x);
             sprite.setY(position.y);
         }

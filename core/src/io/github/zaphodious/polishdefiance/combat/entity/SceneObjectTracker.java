@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Vector3;
 import io.github.zaphodious.polishdefiance.ZaphUtil;
 import io.github.zaphodious.polishdefiance.combat.scene.Direction;
 import io.github.zaphodious.polishdefiance.combat.scene.FightScene;
+import io.github.zaphodious.polishdefiance.combat.scene.NumberPair;
 import io.github.zaphodious.polishdefiance.combat.scene.TiledMapPropertyParser;
 
 import java.util.ArrayList;
@@ -172,7 +173,7 @@ public final class SceneObjectTracker {
         }
 
         for (int i = 0; i < fightScene.getRandom().nextInt(10); i++) {
-            Vector2 startPosition = new Vector2(fightScene.getWorldSize().getX()-fightScene.getTileDims().x, fightScene.getRandom().nextInt((int) fightScene.getWorldSize().getY()));
+            Vector2 startPosition = new Vector2(fightScene.getWorldSize().getX()-fightScene.getTileDimentions().getX(), fightScene.getRandom().nextInt((int) fightScene.getWorldSize().getY()));
             this.addNewObjectToScene("Nazi!", new Texture("imp-laugh.png"),SceneObjectType.COMBAT_UNIT,SnapType.SNAP_TO_GRID,startPosition);
         }
     }
@@ -210,11 +211,11 @@ public final class SceneObjectTracker {
         COMBAT_UNIT(CombatUnit.class) {
             @Override
             public SceneObject newInstance(String name, Texture texture, Vector2 startPosition, TweenManager tweenManager, SceneObjectTracker tracker, FightScene fightScene) {
-                Vector2 tileDims = fightScene.getTileDims();
-                CombatUnit toAdd = new CombatUnit(name, texture,startPosition,tweenManager,tracker).setMoveAmounts(new Vector2(tileDims.x*fightScene.getRandom().nextInt(4), tileDims.y*fightScene.getRandom().nextInt(4)));
+                NumberPair<Integer> tileDims = fightScene.getTileDimentions();
+                CombatUnit toAdd = new CombatUnit(name, texture,startPosition,tweenManager,tracker).setMoveAmounts(new Vector2(tileDims.getX()*fightScene.getRandom().nextInt(4), tileDims.getY()*fightScene.getRandom().nextInt(4)));
 
 
-                toAdd.setSize(tileDims.x, tileDims.y);
+                toAdd.setSize(tileDims.getX(), tileDims.getY());
                 toAdd.command(Command.ATTACK, Direction.EAST);
                 return toAdd;
             }
@@ -222,10 +223,10 @@ public final class SceneObjectTracker {
         PROJECTILE(Projectile.class) {
             @Override
             public SceneObject newInstance(String name, Texture texture, Vector2 startPosition, TweenManager tweenManager, SceneObjectTracker tracker, FightScene fightScene) {
-                Vector2 tileDims = fightScene.getTileDims();
-                startPosition.x += tileDims.x;
+                NumberPair<Integer>  tileDims = fightScene.getTileDimentions();
+                startPosition.x += tileDims.getX();
                 Projectile toAdd = new Projectile(name,fightScene,texture,startPosition,tweenManager,tracker,Faction.NAZI);
-                toAdd.setSize(tileDims.x, tileDims.y);
+                toAdd.setSize(tileDims.getX(), tileDims.getY());
 
                 return toAdd;
             }

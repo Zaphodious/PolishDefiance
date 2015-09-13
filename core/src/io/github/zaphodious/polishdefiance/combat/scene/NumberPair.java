@@ -7,8 +7,8 @@ import com.badlogic.gdx.math.Vector2;
  * @param <K> K extends Number, and both values must be of K
  */
 public class NumberPair<K extends Number>{
-    K x;
-    K y;
+    private K x;
+    private K y;
 
     public NumberPair(K x, K y) {
         this.x = x;
@@ -44,7 +44,13 @@ public class NumberPair<K extends Number>{
         return new NumberPair<T>((T)this.getX(), (T)this.getY());
     }
 
+    public Vector2 getVector2() {
+        return new Vector2(x.floatValue(),y.floatValue());
+    }
+
     public static <T extends Number> NumberPair<T> getFromVector2(Vector2 vector2, Class<T> classParam) {
         return new NumberPair<T>((classParam.cast(vector2.x)) , classParam.cast(vector2.y));
     }
+
+
 }

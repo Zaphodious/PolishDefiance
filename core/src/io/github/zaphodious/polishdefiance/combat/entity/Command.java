@@ -25,7 +25,7 @@ public enum Command {
         @Override
         public void instructUnit(CombatUnit unit, Direction direction, TweenManager tweenManager, SceneObjectTracker tracker) {
             Rectangle shootFrom = new Rectangle(unit.getBoundingRectangle());
-            direction.getOffset(new Vector2(shootFrom.x, shootFrom.y), tracker.getFightScene().getTileDims());
+            direction.getOffset(new Vector2(shootFrom.x, shootFrom.y), tracker.getFightScene().getTileDimentions().getVector2());
             //shootFrom.x += unit.getWidth()+.1;
             //String name, Texture texture, Vector2 startPosition, TweenManager tweenManager, SceneObjectTracker tracker, FightScene fightScen
             Projectile projectile = (Projectile) SceneObjectTracker.SceneObjectType.PROJECTILE.newInstance("bullet", new Texture("gun_blast.png"), new Vector2(shootFrom.x,shootFrom.y), tweenManager, tracker, tracker.getFightScene());

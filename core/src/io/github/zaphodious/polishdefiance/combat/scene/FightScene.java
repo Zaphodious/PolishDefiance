@@ -47,17 +47,18 @@ public class FightScene implements InputProcessor, GestureDetector.GestureListen
 
     SceneObjectTracker tracker;
 
-    int mapHeightInTiles;
-    int mapWidthInTiles;
-    int tileWidth;
-    int tileHeight;
-    int tileOnScreenHeight;
-    int tileOnScreenWidth;
+
+    NumberPair<Integer> mapDimentionsInTiles;
+    NumberPair<Integer> tileDimentions;
+
+
+    NumberPair<Integer> onScreenTileSize;
 
     float differenceRatio;
-
+    int menuBarHeight;
     NumberPair<Integer> worldSize;
     NumberPair<Integer> graphicDims;
+
     Vector2 previousLocation;
 
 
@@ -66,7 +67,7 @@ public class FightScene implements InputProcessor, GestureDetector.GestureListen
     FightUI fightUI;
     InputMultiplexer multiplexer = new InputMultiplexer();
 
-    int menuBarHeight;
+
     //Vector2 menuAreaOnScreen;
 
     TweenManager tweenManager;
@@ -97,7 +98,17 @@ public class FightScene implements InputProcessor, GestureDetector.GestureListen
 
 
 
+        /*
+         get the properties from the map
+         */
+        MapProperties props = tiledMap.getProperties();
+        mapDimentionsInTiles = new NumberPair<Integer>(props.get("width", Integer.class),props.get("height", Integer.class));
+        tileDimentions = new NumberPair<Integer>(props.get("tilewidth", Integer.class),props.get("tileheight", Integer.class));
+        menuBarHeight = this.tileDimentions.getX();
 
+        System.out.println("tile width = " + tileDimentions.getY() + " and tile height = " + tileDimentions.getX());
+        worldSize = new NumberPair<Integer>(mapDimentionsInTiles.getX() * tileDimentions.getY(), (mapDimentionsInTiles.getY() * tileDimentions.getX()) + menuBarHeight);
+        System.out.println("menuBarHeight = " + menuBarHeight + "and total world height = " + worldSize.getY());
 
 
         //menuAreaOnScreen = new Vector2();
@@ -109,7 +120,7 @@ public class FightScene implements InputProcessor, GestureDetector.GestureListen
 
 
 
-        System.out.println("on screen width and height of buttons are " + tileOnScreenWidth + ", " +  tileOnScreenHeight);
+
 
         batch = new SpriteBatch();
 
@@ -121,14 +132,14 @@ public class FightScene implements InputProcessor, GestureDetector.GestureListen
         set-up in the resize function.
          */
         this.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        System.out.println("on screen width and height of buttons are " + onScreenTileSize.getX() + ", " + onScreenTileSize.getY());
 
-
-        /*CombatUnit firstUnit = new CombatUnit("helm", new Texture("brutal-helm.png"), tweenManager).setMoveAmounts(new Vector2(this.tileHeight, this.tileWidth));
+        /*CombatUnit firstUnit = new CombatUnit("helm", new Texture("brutal-helm.png"), tweenManager).setMoveAmounts(new Vector2(this.tileDimentions.getX(), this.tileDimentions.getY()));
         units.add(firstUnit);
-        firstUnit.setSize(tileWidth, tileHeight);*/
+        firstUnit.setSize(tileDimentions.getY(), tileDimentions.getX());*/
 
 
-        System.out.println("on screen width and height of buttons are " + tileOnScreenWidth + ", " + tileOnScreenHeight);
+        System.out.println("on screen width and height of buttons are " + onScreenTileSize.getX() + ", " + onScreenTileSize.getY());
 
 
         gestureDetector = new GestureDetector(this);
@@ -151,8 +162,8 @@ public class FightScene implements InputProcessor, GestureDetector.GestureListen
         int i = 0;
         int j = 0;
 
-            for (i = 0; i > mapHeightInTiles; i++) {
-                for (j = 0; j > mapWidthInTiles; j++) {
+            for (i = 0; i > mapDimentionsInTiles.getY(); i++) {
+                for (j = 0; j > mapDimentionsInTiles.getX(); j++) {
                     System.out.println(parser.getTranslatedProps(i,j).getBulletDodgeChance());
                 }
             }
@@ -162,6 +173,7 @@ public class FightScene implements InputProcessor, GestureDetector.GestureListen
     public NumberPair<Integer> getWorldSize() {
         return worldSize;
     }
+    public NumberPair<Integer> getOnScreenTileSize() { return onScreenTileSize; }
 
     public boolean showCombatMenu() {
         if (isCombatMenuShowing) {
@@ -184,18 +196,7 @@ public class FightScene implements InputProcessor, GestureDetector.GestureListen
          */
         graphicDims = new NumberPair<Integer>(width, height);
 
-        /*
-         then, get the properties from the map
-         */
-        MapProperties props = tiledMap.getProperties();
-        mapHeightInTiles = props.get("height", Integer.class);
-        mapWidthInTiles = props.get("width", Integer.class);
-        tileWidth = props.get("tilewidth", Integer.class);
-        tileHeight = props.get("tileheight", Integer.class);
 
-        System.out.println("tile width = " + tileWidth + " and tile height = " + tileHeight);
-        worldSize = new NumberPair<Integer>(mapWidthInTiles * tileWidth, (mapHeightInTiles * tileHeight) + menuBarHeight);
-        System.out.println("menuBarHeight = " + menuBarHeight + "and total world height = " + worldSize.getY());
 
         /*
         Make the camera, and set it so that it projects correctly for whatever aspect ratio
@@ -210,6 +211,7 @@ public class FightScene implements InputProcessor, GestureDetector.GestureListen
 
         System.out.println("aspect ratio is " + aspectRatio + ", because X = " + graphicDims.getX() + " and Y = " + graphicDims.getY());
         camera.setToOrtho(false, (worldSize.getY() * aspectRatio), worldSize.getY());
+        camera.translate(0, -(menuBarHeight / 2));
 
 
 
@@ -218,8 +220,8 @@ public class FightScene implements InputProcessor, GestureDetector.GestureListen
         The differenceRatio is the ratio between the pixels shown on screen
         and the units that we're using to do our calculations.
          */
-        differenceRatio = camera.viewportWidth / this.graphicDims.getX();
-        menuBarHeight = this.tileHeight;//(mapHeightInTiles * tileHeight)* ( ZaphUtil.GOLDEN_MEAN_REVERSE);//tileHeight * 3;
+        differenceRatio = camera.viewportWidth / this.graphicDims.getX().floatValue();
+        //(mapDimentionsInTiles.getY() * tileDimentions.getX())* ( ZaphUtil.GOLDEN_MEAN_REVERSE);//tileDimentions.getX() * 3;
         System.out.println("Menu bar height after math with the ratio = " + menuBarHeight / differenceRatio);
         System.out.println("and window width = " + Gdx.graphics.getWidth());
         camera.position.y -= menuBarHeight/2;
@@ -230,10 +232,11 @@ public class FightScene implements InputProcessor, GestureDetector.GestureListen
         Tween.from(camera, CameraTweenAccessor.ZOOM, 1f).target(3F)
                 .start(tweenManager).ease(Bounce.OUT);
 
-        tileOnScreenHeight = (int) (tileHeight / differenceRatio);
-        System.out.println("tileOnScreenHeight = " + tileOnScreenHeight);
-        tileOnScreenWidth = (int) (tileWidth / differenceRatio);
-        System.out.println("tileOnScreenWidth = " + tileOnScreenWidth);
+        onScreenTileSize = new NumberPair<Integer>((int) (tileDimentions.getX() / differenceRatio), (int) (tileDimentions.getY() / differenceRatio));
+
+        System.out.println("onScreenTileSize.getY() = " + onScreenTileSize.getY());
+
+        System.out.println("onScreenTileSize.getX() = " + onScreenTileSize.getX());
 
         if (origCamPos.x != -1) {
             camera.position.x = origCamPos.x;
@@ -355,7 +358,7 @@ public class FightScene implements InputProcessor, GestureDetector.GestureListen
         previousLocation = new Vector2(screenX,screenY);
         Vector3 touchLocation = new Vector3(previousLocation, 0);
         Vector3 inWorldTouchLocation = camera.unproject(touchLocation);
-        //testSprite.setPosition((inWorldTouchLocation.x)-((inWorldTouchLocation.x)%(tileWidth)),(inWorldTouchLocation.y)-((inWorldTouchLocation.y)%(tileHeight)));
+        //testSprite.setPosition((inWorldTouchLocation.x)-((inWorldTouchLocation.x)%(tileDimentions.getY())),(inWorldTouchLocation.y)-((inWorldTouchLocation.y)%(tileDimentions.getX())));
 
         return false;
     }
@@ -481,7 +484,7 @@ public class FightScene implements InputProcessor, GestureDetector.GestureListen
 
     @Override
     public boolean scrolled(int amount) {
-        this.scrollScreen(amount* mapWidthInTiles,0,true);
+        this.scrollScreen(amount* mapDimentionsInTiles.getX(),0,true);
         return true;
     }
 
@@ -505,8 +508,8 @@ public class FightScene implements InputProcessor, GestureDetector.GestureListen
         System.out.println("shit happened yo!");
         Vector3 touchLocation = new Vector3(x, y, 0);
         Vector3 inWorldTouchLocation = camera.unproject(touchLocation);
-        int tileX = (int) (inWorldTouchLocation.x / this.tileWidth);
-        int tileY = (int) (inWorldTouchLocation.y / this.tileHeight);
+        int tileX = (int) (inWorldTouchLocation.x / this.tileDimentions.getY());
+        int tileY = (int) (inWorldTouchLocation.y / this.tileDimentions.getX());
         System.out.println("Touch happened at " + tileX + "," + tileY);
 
         try {
@@ -533,8 +536,8 @@ public class FightScene implements InputProcessor, GestureDetector.GestureListen
         }
         /*Vector2 tileTouchLocation = new Vector2(this.getTileLocation(inWorldTouchLocation));
 
-       CombatUnit newUnit = new CombatUnit("helm", new Texture("brutal-helm.png"), tileTouchLocation, tweenManager).setMoveAmounts(new Vector2(this.tileHeight, this.tileWidth));
-        newUnit.setSize(tileHeight, tileWidth);
+       CombatUnit newUnit = new CombatUnit("helm", new Texture("brutal-helm.png"), tileTouchLocation, tweenManager).setMoveAmounts(new Vector2(this.tileDimentions.getX(), this.tileDimentions.getY()));
+        newUnit.setSize(tileDimentions.getX(), tileDimentions.getY());
         units.add(newUnit);*/
 
         if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
@@ -553,7 +556,7 @@ public class FightScene implements InputProcessor, GestureDetector.GestureListen
 
 
 
-        /*tileTouchLocation.x += tileWidth+1;
+        /*tileTouchLocation.x += tileDimentions.getY()+1;
 
         Projectile newProjectile = new Projectile("Bullet",this, new Texture(Gdx.files.internal("gun_blast.png")),
                 tileTouchLocation,
@@ -566,13 +569,13 @@ public class FightScene implements InputProcessor, GestureDetector.GestureListen
 
 
         Vector2 toDraw = fightUI.getViewport().unproject(new Vector2(x,y));
-        float screenTilesWide = Gdx.graphics.getWidth() / tileOnScreenWidth ;
-        float screenTilesHigh = Gdx.graphics.getHeight() / tileOnScreenHeight;
-        //fightUI.readjustButtons(toDraw);//new Vector2( x - x % tileOnScreenWidth, y - y % tileOnScreenHeight));
+        float screenTilesWide = Gdx.graphics.getWidth() / onScreenTileSize.getX() ;
+        float screenTilesHigh = Gdx.graphics.getHeight() / onScreenTileSize.getY();
+        //fightUI.readjustButtons(toDraw);//new Vector2( x - x % onScreenTileSize.getX(), y - y % onScreenTileSize.getY()));
 
-        //Tween.to(units.get("helm"), SpriteTweenAccessor.POSITION_XY, .5f).target((inWorldTouchLocation.x) - ((inWorldTouchLocation.x) % (tileWidth)), (inWorldTouchLocation.y) - ((inWorldTouchLocation.y) % (tileHeight))).start(tweenManager);
+        //Tween.to(units.get("helm"), SpriteTweenAccessor.POSITION_XY, .5f).target((inWorldTouchLocation.x) - ((inWorldTouchLocation.x) % (tileDimentions.getY())), (inWorldTouchLocation.y) - ((inWorldTouchLocation.y) % (tileDimentions.getX()))).start(tweenManager);
 
-        //testSprite.setPosition((inWorldTouchLocation.x) - ((inWorldTouchLocation.x) % (tileWidth)), (inWorldTouchLocation.y) - ((inWorldTouchLocation.y) % (tileHeight)));
+        //testSprite.setPosition((inWorldTouchLocation.x) - ((inWorldTouchLocation.x) % (tileDimentions.getY())), (inWorldTouchLocation.y) - ((inWorldTouchLocation.y) % (tileDimentions.getX())));
 
         try {
         TiledMapTileLayer featureLayer = (TiledMapTileLayer) tiledMap.getLayers().get("features");//("features");
@@ -681,7 +684,7 @@ public class FightScene implements InputProcessor, GestureDetector.GestureListen
      */
     public Vector2 getTileLocation(Vector3 inWorldTouchLocation) {
 
-        Vector2 toReturn = new Vector2((inWorldTouchLocation.x - ((inWorldTouchLocation.x) % (tileWidth))), (inWorldTouchLocation.y) - ((inWorldTouchLocation.y) % (tileHeight)));
+        Vector2 toReturn = new Vector2((inWorldTouchLocation.x - ((inWorldTouchLocation.x) % (tileDimentions.getY()))), (inWorldTouchLocation.y) - ((inWorldTouchLocation.y) % (tileDimentions.getX())));
         //System.out.println(toReturn);
         return toReturn;
     }
@@ -695,8 +698,8 @@ public class FightScene implements InputProcessor, GestureDetector.GestureListen
     }
 
     public NumberPair<Integer> getCellAt(Rectangle location) {
-        int tileX = (int) (location.x / this.tileWidth);
-        int tileY = (int) (location.y / this.tileHeight);
+        int tileX = (int) (location.x / this.tileDimentions.getY());
+        int tileY = (int) (location.y / this.tileDimentions.getX());
 
         return new NumberPair<Integer>(tileX,tileY);
     }
@@ -719,8 +722,8 @@ public class FightScene implements InputProcessor, GestureDetector.GestureListen
         return false;
     }
 
-    public Vector2 getTileDims() {
-        return new Vector2(tileHeight,tileWidth);
+    public NumberPair<Integer> getTileDimentions() {
+        return tileDimentions;
     }
 
     public TiledMapPropertyParser getPropertyParser() {

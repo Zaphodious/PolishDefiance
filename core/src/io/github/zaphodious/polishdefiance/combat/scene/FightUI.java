@@ -168,10 +168,10 @@ public class FightUI extends Stage {
                                                                        }
         );
 
-        Vector2 startPosition = new Vector2(fightScene.tileOnScreenWidth * 3, fightScene.tileOnScreenHeight * 10);
+        Vector2 startPosition = new Vector2(fightScene.getOnScreenTileSize().getX() * 3, fightScene.getOnScreenTileSize().getY() * 10);
         readjustButtons(startPosition);
 
-        System.out.println("on screen width and height of buttons are " + fightScene.tileOnScreenWidth + ", " + fightScene.tileOnScreenHeight);
+        System.out.println("on screen width and height of buttons are " + fightScene.getOnScreenTileSize().getX() + ", " + fightScene.getOnScreenTileSize().getY());
 
         for (Button button : buttons.values()) {
             this.addActor(button);
@@ -183,8 +183,8 @@ public class FightUI extends Stage {
 
         advanceTestButton = new TextButton("Advance Round", skin, "default");
         advanceTestButton.setPosition(0, 0);
-        advanceTestButton.setWidth(fightScene.tileOnScreenWidth * 5);
-        advanceTestButton.setHeight(fightScene.tileOnScreenHeight);
+        advanceTestButton.setWidth(fightScene.getOnScreenTileSize().getX() * 5);
+        advanceTestButton.setHeight(fightScene.getOnScreenTileSize().getY());
         advanceTestButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -203,10 +203,10 @@ public class FightUI extends Stage {
     }
 
     public void setPositionForButtons(Vector2 startPosition) {
-        buttons.get("up").setPosition(startPosition.x, startPosition.y + fightScene.tileOnScreenHeight);
-        buttons.get("down").setPosition(startPosition.x, startPosition.y - fightScene.tileOnScreenHeight);
-        buttons.get("left").setPosition(startPosition.x - fightScene.tileOnScreenWidth, startPosition.y);
-        buttons.get("right").setPosition(startPosition.x + fightScene.tileOnScreenWidth, startPosition.y);
+        buttons.get("up").setPosition(startPosition.x, startPosition.y + fightScene.getOnScreenTileSize().getY());
+        buttons.get("down").setPosition(startPosition.x, startPosition.y - fightScene.getOnScreenTileSize().getY());
+        buttons.get("left").setPosition(startPosition.x - fightScene.getOnScreenTileSize().getX(), startPosition.y);
+        buttons.get("right").setPosition(startPosition.x + fightScene.getOnScreenTileSize().getX(), startPosition.y);
         buttons.get("attack").setPosition(startPosition.x, startPosition.y);
 
     }
@@ -219,8 +219,8 @@ public class FightUI extends Stage {
         setPositionForButtons(startPosition);
 
         for (Button button : buttons.values()) {
-            button.setWidth((fightScene.tileOnScreenWidth));
-            button.setHeight((fightScene.tileOnScreenHeight));
+            button.setWidth((fightScene.getOnScreenTileSize().getX()));
+            button.setHeight((fightScene.getOnScreenTileSize().getY()));
 
         }
 
