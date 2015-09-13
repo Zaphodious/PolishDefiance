@@ -24,7 +24,7 @@ public enum Direction {
 
         @Override
         public void startProjectileTween(Projectile projectile, SceneObjectTracker tracker, TweenManager tweenManager) {
-            Tween.to((Sprite) projectile, SpriteTweenAccessor.POSITION_Y, 1.5f).target(tracker.getFightScene().getWorldSize().y).ease(Linear.INOUT).start(tweenManager);
+            Tween.to((Sprite) projectile, SpriteTweenAccessor.POSITION_Y, 1.5f).target(tracker.getFightScene().getWorldSize().getY()).ease(Linear.INOUT).start(tweenManager);
         }
     },
     SOUTH("South", 90f) {
@@ -48,7 +48,7 @@ public enum Direction {
 
         @Override
         public void startProjectileTween(Projectile projectile, SceneObjectTracker tracker, TweenManager tweenManager) {
-            Tween.to((Sprite) projectile, SpriteTweenAccessor.POSITION_X, 1.5f).target(projectile.getBoundingRectangle().x + tracker.getFightScene().getWorldSize().x).ease(Linear.INOUT).start(tweenManager);
+            Tween.to((Sprite) projectile, SpriteTweenAccessor.POSITION_X, 1.5f).target(projectile.getBoundingRectangle().x + tracker.getFightScene().getWorldSize().getX()).ease(Linear.INOUT).start(tweenManager);
         }
     },
     WEST("West", 180f) {
@@ -60,7 +60,7 @@ public enum Direction {
 
         @Override
         public void startProjectileTween(Projectile projectile, SceneObjectTracker tracker, TweenManager tweenManager) {
-            Tween.to((Sprite) projectile, SpriteTweenAccessor.POSITION_X, 1.5f).target((projectile.getBoundingRectangle().x - tracker.getFightScene().getWorldSize().x)).ease(Linear.INOUT).start(tweenManager);
+            Tween.to((Sprite) projectile, SpriteTweenAccessor.POSITION_X, 1.5f).target((projectile.getBoundingRectangle().x - tracker.getFightScene().getWorldSize().getX())).ease(Linear.INOUT).start(tweenManager);
         }
 
         @Override

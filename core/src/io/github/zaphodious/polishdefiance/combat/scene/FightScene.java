@@ -17,18 +17,20 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.maps.MapProperties;
-import com.badlogic.gdx.maps.tiled.*;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Disposable;
+import io.github.zaphodious.polishdefiance.Tween.CameraTweenAccessor;
 import io.github.zaphodious.polishdefiance.combat.entity.CombatUnit;
 import io.github.zaphodious.polishdefiance.combat.entity.Faction;
 import io.github.zaphodious.polishdefiance.combat.entity.SceneObjectTracker;
-import io.github.zaphodious.polishdefiance.Tween.CameraTweenAccessor;
-import javafx.util.Pair;
 
 import java.util.Iterator;
 import java.util.Random;
@@ -41,7 +43,7 @@ public class FightScene implements InputProcessor, GestureDetector.GestureListen
     OrthographicCamera camera;
     TiledMap tiledMap;
     TiledMapRenderer tiledMapRenderer;
-    TilePropertyParser parser;
+    TiledMapPropertyParser parser;
 
     SceneObjectTracker tracker;
 
@@ -54,8 +56,8 @@ public class FightScene implements InputProcessor, GestureDetector.GestureListen
 
     float differenceRatio;
 
-    Vector2 worldSize;
-    Vector2 graphicDims;
+    NumberPair<Integer> worldSize;
+    NumberPair<Integer> graphicDims;
     Vector2 previousLocation;
 
 
@@ -64,7 +66,7 @@ public class FightScene implements InputProcessor, GestureDetector.GestureListen
     FightUI fightUI;
     InputMultiplexer multiplexer = new InputMultiplexer();
 
-    float menuBarHeight;
+    int menuBarHeight;
     //Vector2 menuAreaOnScreen;
 
     TweenManager tweenManager;
@@ -140,7 +142,7 @@ public class FightScene implements InputProcessor, GestureDetector.GestureListen
 
 
 
-        parser = new TilePropertyParser(tiledMap);
+        parser = new TiledMapPropertyParser(tiledMap);
 
 
 
@@ -157,7 +159,7 @@ public class FightScene implements InputProcessor, GestureDetector.GestureListen
 
     }
 
-    public Vector2 getWorldSize() {
+    public NumberPair<Integer> getWorldSize() {
         return worldSize;
     }
 
@@ -180,7 +182,7 @@ public class FightScene implements InputProcessor, GestureDetector.GestureListen
         /*
         first, get the pixels shown on screen.
          */
-        graphicDims = new Vector2(width, height);
+        graphicDims = new NumberPair<Integer>(width, height);
 
         /*
          then, get the properties from the map
@@ -192,8 +194,8 @@ public class FightScene implements InputProcessor, GestureDetector.GestureListen
         tileHeight = props.get("tileheight", Integer.class);
 
         System.out.println("tile width = " + tileWidth + " and tile height = " + tileHeight);
-        worldSize = new Vector2(mapWidthInTiles * tileWidth, (mapHeightInTiles * tileHeight) + menuBarHeight);
-        System.out.println("menuBarHeight = " + menuBarHeight + "and total world height = " + worldSize.y);
+        worldSize = new NumberPair<Integer>(mapWidthInTiles * tileWidth, (mapHeightInTiles * tileHeight) + menuBarHeight);
+        System.out.println("menuBarHeight = " + menuBarHeight + "and total world height = " + worldSize.getY());
 
         /*
         Make the camera, and set it so that it projects correctly for whatever aspect ratio
@@ -204,8 +206,10 @@ public class FightScene implements InputProcessor, GestureDetector.GestureListen
         Vector2 origCamPos = (camera != null) ? new Vector2(camera.position.x,camera.position.y):new Vector2(-1,-1);
 
         camera = new OrthographicCamera();
-        float aspectRatio = graphicDims.x/graphicDims.y;
-        camera.setToOrtho(false, (worldSize.y * aspectRatio), worldSize.y);
+        float aspectRatio = (graphicDims.getX().floatValue())/(graphicDims.getY().floatValue());
+
+        System.out.println("aspect ratio is " + aspectRatio + ", because X = " + graphicDims.getX() + " and Y = " + graphicDims.getY());
+        camera.setToOrtho(false, (worldSize.getY() * aspectRatio), worldSize.getY());
 
 
 
@@ -214,7 +218,7 @@ public class FightScene implements InputProcessor, GestureDetector.GestureListen
         The differenceRatio is the ratio between the pixels shown on screen
         and the units that we're using to do our calculations.
          */
-        differenceRatio = camera.viewportWidth / this.graphicDims.x;
+        differenceRatio = camera.viewportWidth / this.graphicDims.getX();
         menuBarHeight = this.tileHeight;//(mapHeightInTiles * tileHeight)* ( ZaphUtil.GOLDEN_MEAN_REVERSE);//tileHeight * 3;
         System.out.println("Menu bar height after math with the ratio = " + menuBarHeight / differenceRatio);
         System.out.println("and window width = " + Gdx.graphics.getWidth());
@@ -254,7 +258,7 @@ public class FightScene implements InputProcessor, GestureDetector.GestureListen
         fontParam.color = Color.WHITE;
         fontParam.borderColor = Color.BLACK;
         fontParam.borderWidth = .5f;
-        fontParam.size = (int)(graphicDims.x / 32);
+        fontParam.size = (int)(graphicDims.getX() / 32);
         if (font != null) {
             font.dispose();
         }
@@ -290,8 +294,8 @@ public class FightScene implements InputProcessor, GestureDetector.GestureListen
 
 
         fightUI.getBatch().begin();
-        /*font.draw(fightUI.getBatch(), textToRender, 0, graphicDims.y);
-        font.draw(fightUI.getBatch(), propsToRender, 0, graphicDims.y - font.getXHeight() * 3);*/
+        /*font.draw(fightUI.getBatch(), textToRender, 0, graphicDims.getY());
+        font.draw(fightUI.getBatch(), propsToRender, 0, graphicDims.getY() - font.getXHeight() * 3);*/
         fightUI.getBatch().end();
 
         fightUI.act();
@@ -422,7 +426,7 @@ public class FightScene implements InputProcessor, GestureDetector.GestureListen
                 camera.translate(deltaX, 0);
 
 
-        } else if (deltaX > 0 && camera.viewportWidth/2 + camera.position.x < worldSize.x) {
+        } else if (deltaX > 0 && camera.viewportWidth/2 + camera.position.x < worldSize.getX()) {
 
                 camera.translate(deltaX, 0);
 
@@ -431,7 +435,7 @@ public class FightScene implements InputProcessor, GestureDetector.GestureListen
         //camera.translate(0, change.y);
         /*if (change.y < 0 && camera.position.y < camera.viewportHeight / 2) {
             camera.translate(0, change.y);
-        } else if (change.y > 0 && camera.viewportHeight/2 + camera.position.y > worldSize.y) {
+        } else if (change.y > 0 && camera.viewportHeight/2 + camera.position.y > worldSize.getY) {
             camera.translate(0, change.y);
         }*/
 
@@ -446,7 +450,7 @@ public class FightScene implements InputProcessor, GestureDetector.GestureListen
 
     private void putCameraInBounds() {
 
-        if (camera.position.x == camera.viewportWidth / 2 || camera.viewportWidth/2 + camera.position.x == worldSize.x){
+        if (camera.position.x == camera.viewportWidth / 2 || camera.viewportWidth/2 + camera.position.x == worldSize.getX()){
             return;
         }
 
@@ -457,12 +461,12 @@ public class FightScene implements InputProcessor, GestureDetector.GestureListen
                     camera.position.z);*/
             Tween.to(camera,CameraTweenAccessor.POSITION_X,.3f).target(camera.viewportWidth / 2).start(tweenManager).ease(Back.OUT);
 
-        } else if (camera.viewportWidth/2 + camera.position.x > worldSize.x){
+        } else if (camera.viewportWidth/2 + camera.position.x > worldSize.getX()){
             /*camera.position.set(
-                    worldSize.x - (camera.viewportWidth / 2),
+                    worldSize.getX() - (camera.viewportWidth / 2),
                     camera.position.y,
                     camera.position.z);*/
-            Tween.to(camera,CameraTweenAccessor.POSITION_X,.3f).target(worldSize.x - (camera.viewportWidth / 2)).start(tweenManager).ease(Back.OUT);
+            Tween.to(camera,CameraTweenAccessor.POSITION_X,.3f).target(worldSize.getX() - (camera.viewportWidth / 2)).start(tweenManager).ease(Back.OUT);
 
 
         }
@@ -662,7 +666,7 @@ public class FightScene implements InputProcessor, GestureDetector.GestureListen
         return this.multiplexer;
     }
 
-    public Vector2 getGraphicDimentions() {
+    public NumberPair<Integer> getGraphicDimentions() {
         return graphicDims;
     }
 
@@ -690,11 +694,11 @@ public class FightScene implements InputProcessor, GestureDetector.GestureListen
         return getTileLocation(new Vector3(inWorldTouchLocation, 0));
     }
 
-    public Pair<Integer, Integer> getCellAt(Rectangle location) {
+    public NumberPair<Integer> getCellAt(Rectangle location) {
         int tileX = (int) (location.x / this.tileWidth);
         int tileY = (int) (location.y / this.tileHeight);
 
-        return new Pair<Integer, Integer>(tileX,tileY);
+        return new NumberPair<Integer>(tileX,tileY);
     }
 
     public boolean doTheseOverlap(Sprite sprite1, Sprite sprite2) {
@@ -719,7 +723,7 @@ public class FightScene implements InputProcessor, GestureDetector.GestureListen
         return new Vector2(tileHeight,tileWidth);
     }
 
-    public TilePropertyParser getTilePropertyParser() {
+    public TiledMapPropertyParser getPropertyParser() {
         return parser;
     }
 

@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Vector3;
 import io.github.zaphodious.polishdefiance.ZaphUtil;
 import io.github.zaphodious.polishdefiance.combat.scene.Direction;
 import io.github.zaphodious.polishdefiance.combat.scene.FightScene;
-import io.github.zaphodious.polishdefiance.combat.scene.TilePropertyParser;
+import io.github.zaphodious.polishdefiance.combat.scene.TiledMapPropertyParser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -114,7 +114,7 @@ public final class SceneObjectTracker {
         if (fightScene.doTheseOverlap(projectile, unit)) {
             if (!projectile.isKill() && !unit.isKill()) {
                 if (projectile.getUnitFaction() != unit.getUnitFaction()) {
-                    TilePropertyParser.PropBundle propBundle = fightScene.getTilePropertyParser().getTranslatedProps(fightScene.getCellAt(unit.getBoundingRectangle()));
+                    TiledMapPropertyParser.PropBundle propBundle = fightScene.getPropertyParser().getTranslatedProps(fightScene.getCellAt(unit.getBoundingRectangle()));
 
                     if (fightScene.getRandom().nextFloat() > propBundle.getBulletDodgeChance()) {
                         toReturn = true;
@@ -163,16 +163,16 @@ public final class SceneObjectTracker {
         for (CombatUnit combatUnit : this.getObjectsOfType(CombatUnit.class)) {
             if (combatUnit.getUnitFaction() == Faction.NAZI) {
                 if (fightScene.getRandom().nextBoolean() == true) {
-                    combatUnit.command(CombatUnit.Command.ATTACK, Direction.WEST);
+                    combatUnit.command(Command.ATTACK, Direction.WEST);
                 } else {
-                    combatUnit.command(CombatUnit.Command.MOVE, Direction.WEST);
+                    combatUnit.command(Command.MOVE, Direction.WEST);
                 }
             }
             combatUnit.advanceRound();
         }
 
         for (int i = 0; i < fightScene.getRandom().nextInt(10); i++) {
-            Vector2 startPosition = new Vector2(fightScene.getWorldSize().x-fightScene.getTileDims().x, fightScene.getRandom().nextInt((int) fightScene.getWorldSize().y));
+            Vector2 startPosition = new Vector2(fightScene.getWorldSize().getX()-fightScene.getTileDims().x, fightScene.getRandom().nextInt((int) fightScene.getWorldSize().getY()));
             this.addNewObjectToScene("Nazi!", new Texture("imp-laugh.png"),SceneObjectType.COMBAT_UNIT,SnapType.SNAP_TO_GRID,startPosition);
         }
     }
@@ -215,7 +215,7 @@ public final class SceneObjectTracker {
 
 
                 toAdd.setSize(tileDims.x, tileDims.y);
-                toAdd.command(CombatUnit.Command.ATTACK, Direction.EAST);
+                toAdd.command(Command.ATTACK, Direction.EAST);
                 return toAdd;
             }
         },

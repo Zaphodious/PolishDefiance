@@ -23,7 +23,7 @@ public class TiledMapPropertyParser implements Disposable {
     TiledMapTileLayer.Cell selectedCell;
     MapProperties props;
 
-    Map<TwoNumberPair<Integer>, PropBundle> bundleCache;
+    Map<NumberPair<Integer>, PropBundle> bundleCache;
 
     public TiledMapPropertyParser(TiledMap tiledMap) {
         this.tiledMap = tiledMap;
@@ -46,12 +46,12 @@ public class TiledMapPropertyParser implements Disposable {
         return this.tiledMap;
     }
 
-    public TwoNumberPair<Integer> getTileDimentions() {
-        return new TwoNumberPair<Integer>(tiledMap.getProperties().get("tileheight", Integer.class),tiledMap.getProperties().get("tilewidth", Integer.class));
+    public NumberPair<Integer> getTileDimentions() {
+        return new NumberPair<Integer>(tiledMap.getProperties().get("tileheight", Integer.class),tiledMap.getProperties().get("tilewidth", Integer.class));
     }
 
-    public TwoNumberPair<Integer> getMapDimentionsInTiles() {
-        return new TwoNumberPair<Integer>(tiledMap.getProperties().get("height", Integer.class),tiledMap.getProperties().get("width", Integer.class));
+    public NumberPair<Integer> getMapDimentionsInTiles() {
+        return new NumberPair<Integer>(tiledMap.getProperties().get("height", Integer.class),tiledMap.getProperties().get("width", Integer.class));
     }
 
     private void setTileForInspection(int tileX, int tileY) {
@@ -81,13 +81,13 @@ public class TiledMapPropertyParser implements Disposable {
 
     }
 
-    public PropBundle getTranslatedProps(TwoNumberPair<Integer> location) {
+    public PropBundle getTranslatedProps(NumberPair<Integer> location) {
         return getTranslatedProps(location.getX(), location.getY());
     }
 
     public PropBundle getTranslatedProps(int tileX, int tileY) {
 
-        TwoNumberPair<Integer> tileNumber = new TwoNumberPair<Integer>(tileX,tileY);
+        NumberPair<Integer> tileNumber = new NumberPair<Integer>(tileX,tileY);
         if (bundleCache.containsKey(tileNumber)) {
             return bundleCache.get(tileNumber);
         } else {

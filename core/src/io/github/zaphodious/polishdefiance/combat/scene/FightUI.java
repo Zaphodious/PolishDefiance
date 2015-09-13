@@ -13,8 +13,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FillViewport;
-import io.github.zaphodious.polishdefiance.combat.entity.CombatUnit;
 import io.github.zaphodious.polishdefiance.ZaphUtil;
+import io.github.zaphodious.polishdefiance.combat.entity.CombatUnit;
+import io.github.zaphodious.polishdefiance.combat.entity.Command;
 
 import java.util.Map;
 
@@ -128,7 +129,7 @@ public class FightUI extends Stage {
                                           @Override
                                           public void clicked(InputEvent event, float x, float y) {
 
-                                              focusUnit.command(CombatUnit.Command.MOVE, Direction.NORTH);
+                                              focusUnit.command(Command.MOVE, Direction.NORTH);
                                               toggleButtonVisability();
                                           }
                                       }
@@ -137,7 +138,7 @@ public class FightUI extends Stage {
                                             @Override
                                             public void clicked(InputEvent event, float x, float y) {
 
-                                                focusUnit.command(CombatUnit.Command.MOVE, Direction.SOUTH);
+                                                focusUnit.command(Command.MOVE, Direction.SOUTH);
                                                 toggleButtonVisability();
                                             }
                                         }
@@ -145,7 +146,7 @@ public class FightUI extends Stage {
                                               @Override
                                               public void clicked(InputEvent event, float x, float y) {
 
-                                                  focusUnit.command(CombatUnit.Command.MOVE, Direction.WEST);
+                                                  focusUnit.command(Command.MOVE, Direction.WEST);
                                                   toggleButtonVisability();
                                               }
                                           }
@@ -153,7 +154,7 @@ public class FightUI extends Stage {
                                                                  @Override
                                                                  public void clicked(InputEvent event, float x, float y) {
 
-                                                                     focusUnit.command(CombatUnit.Command.MOVE, Direction.EAST);
+                                                                     focusUnit.command(Command.MOVE, Direction.EAST);
                                                                      toggleButtonVisability();
                                                                  }
                                                              }
@@ -161,7 +162,7 @@ public class FightUI extends Stage {
                                                                            @Override
                                                                            public void clicked(InputEvent event, float x, float y) {
 
-                                                                               focusUnit.command(CombatUnit.Command.ATTACK, Direction.EAST);
+                                                                               focusUnit.command(Command.ATTACK, Direction.EAST);
                                                                                toggleButtonVisability();
                                                                            }
                                                                        }

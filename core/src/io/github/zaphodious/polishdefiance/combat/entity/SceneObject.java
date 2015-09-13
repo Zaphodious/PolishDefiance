@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import io.github.zaphodious.polishdefiance.combat.scene.NumberPair;
 
 /**
  * Created by achyt_000 on 9/8/2015.
@@ -120,13 +121,13 @@ public abstract class SceneObject extends Sprite {
     public boolean isThisOutOfBounds() {
         boolean toReturn = false;
         Rectangle thisBoundingRectangle = this.getBoundingRectangle();
-        Vector2 worldSize = tracker.getFightScene().getWorldSize();
+        NumberPair<Integer> worldSize = tracker.getFightScene().getWorldSize();
 
-        if (thisBoundingRectangle.x >= worldSize.x) {
+        if (thisBoundingRectangle.x >= worldSize.getX()) {
             toReturn = true;
         }
 
-        if (thisBoundingRectangle.y >= worldSize.y) {
+        if (thisBoundingRectangle.y >= worldSize.getY()) {
             toReturn = true;
         }
 
